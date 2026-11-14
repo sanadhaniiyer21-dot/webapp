@@ -1,0 +1,29 @@
+{% load static %}
+{% comment %}
+The head shared by the standalone pages.
+
+These pages do not extend base.html, because base.html depends on the context
+processors and those depend on a request. The 500 page is rendered without one
+on purpose, so a failure in the request, the database or a context processor
+cannot take the error page down with it.
+
+site.css is linked but never depended on: the inline critical CSS is what
+guarantees the page is readable. Nothing here loads from another origin.
+{% endcomment %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" href="{% static 'core/img/favicon.svg' %}" type="image/svg+xml">
+{% include "core/_critical.html" %}
+<link rel="stylesheet" href="{% static 'core/fonts.css' %}">
+<link rel="stylesheet" href="{% static 'core/site.css' %}">
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem('maison-theme');
+      if (saved === 'dark' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) { /* ignore */ }
+  })();
+</script>

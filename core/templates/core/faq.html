@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="shell section--tight" style="padding-top:clamp(2.5rem,5vw,4rem)">
+  <p class="eyebrow">Questions and answers</p>
+  <h1 class="h1" style="max-width:14ch">The things people ask</h1>
+  <p class="lede" style="margin-top:1.25rem">
+    Fourteen answers, kept short. If yours is not here, the assistant will try,
+    and open a ticket if it cannot.
+  </p>
+</div>
+
+<div class="shell" style="padding-bottom:var(--section)">
+  <div class="faq__layout">
+
+    <nav class="faq__index" aria-label="FAQ categories">
+      <p class="eyebrow">Categories</p>
+      <ul data-faq-index>
+        <li><button type="button" class="linklike small" data-faq-cat="" aria-pressed="true">All</button></li>
+        {% for category in categories %}
+          <li><button type="button" class="linklike small" data-faq-cat="{{ category }}" aria-pressed="false">{{ category }}</button></li>
+        {% endfor %}
+      </ul>
+    </nav>
+
+    <div>
+      <div class="faq-search">
+        <label for="faq-search" class="eyebrow">Search the answers</label>
+        <input type="search" id="faq-search" data-faq-search
+               placeholder="shipping, bitter, caffeine, error codes">
+      </div>
+
+      <p class="faq-count" data-faq-count aria-live="polite">{{ faqs|length }} questions</p>
+
+      {% comment %}
+      This list is replaced on load by faq.js, which reads GET /api/faqs/:
+      that is what the launch checklist asks for. The server-rendered copy
+      here is the no-JavaScript fallback and what a search engine sees. Both
+      come from the same SQL table, so they cannot disagree.
+      {% endcomment %}
+      <ul class="accordion" data-faq-list>
+        {% for faq in faqs %}
+          <li data-faq-item data-category="{{ faq.category }}">
+            <h2>
+              <button type="button" class="accordion__button" aria-expanded="false"
+                      aria-controls="faq-panel-{{ faq.id }}" id="faq-button-{{ faq.id }}">
+                <span data-faq-question>{{ faq.question }}</span>
+                <span class="accordion__sign" aria-hidden="true"></span>
+              </button>
+            </h2>
+            <div class="accordion__panel" id="faq-panel-{{ faq.id }}"
+                 role="region" aria-labelledby="faq-button-{{ faq.id }}" hidden>
+              <p data-faq-answer>{{ faq.answer }}</p>
+              <p class="accordion__cat">{{ faq.category }}</p>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+
+      <div class="state" data-faq-empty hidden>
+        <h3 class="h3">Nothing matched that word</h3>
+        <p>
+          Try a shorter search, or ask in your own words. The assistant searches
+          the same fourteen answers and will open a ticket if none of them fit.
+        </p>
+        <button type="button" class="button button--quiet button--small" data-open-assistant>
+          Ask the assistant
+        </button>
+      </div>
+
+      <div class="state" data-faq-error hidden>
+        <h3 class="h3">The answers did not load</h3>
+        <p>The list above is the saved copy, which is still correct.</p>
+        <button type="button" class="button button--quiet button--small" data-faq-retry>Try again</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'core/faq.js' %}" type="module"></script>
+{% endblock %}

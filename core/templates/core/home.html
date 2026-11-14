@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+{# ---------------------------------------------------------- Hero ---- #}
+<section class="hero">
+  <div class="shell">
+    <div class="grid12 hero__grid">
+      <div class="hero__text">
+        <p class="eyebrow">Coimbatore, since 2019</p>
+        <h1 class="display hero__title">
+          Tea worth<br>paying <em>attention</em><br>to.
+        </h1>
+        <p class="lede">
+          Twenty-eight loose-leaf teas and tisanes, each with the temperature,
+          the weight and the time we actually use. No mystery blends, no
+          wellness claims.
+        </p>
+        <div class="hero__actions">
+          <a class="button" href="/teas/">Explore the teas</a>
+          <button type="button" class="linklike" data-open-assistant>
+            Ask the assistant what to drink
+          </button>
+        </div>
+
+        <dl class="hero__meta">
+          <div>
+            <dt>Catalogue</dt>
+            <dd class="num">28</dd>
+          </div>
+          <div>
+            <dt>Returns</dt>
+            <dd class="num">30 days</dd>
+          </div>
+          <div>
+            <dt>Free over</dt>
+            <dd class="num">&#8377;1,200</dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="hero__art">
+        <img src="{% static 'core/img/hero.svg' %}" width="600" height="800"
+             alt="Line illustration of a cup of tea on a saucer, with two sprigs of tea leaves.">
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ----------------------------------------------------- Statement ---- #}
+<section class="section statement">
+  <div class="shell">
+    <p class="eyebrow">What we think</p>
+    <p>
+      Most bad cups of tea are good leaf, brewed too hot for too long.
+      That is a solvable problem, and we would rather solve it than sell you more tea.
+    </p>
+  </div>
+</section>
+
+{# -------------------------------------------------- Tea for today ---- #}
+<section class="section reveal">
+  <div class="shell">
+    <div class="grid12 today__grid">
+      <div class="today__intro">
+        <p class="eyebrow">Tea for today</p>
+        <h2 class="h2">What the weather suggests</h2>
+        <p class="lede" style="margin-top:1rem">{{ weather.reason }}</p>
+        <p class="source-tag" data-source="{{ weather.source }}">{{ weather.label }}</p>
+        {% if weather.source == 'fallback' %}
+          <p class="small muted" style="margin-top:0.75rem">
+            The weather service did not answer in time, so this is chosen by season.
+            That condition is <a class="link" href="/error-codes/">SITE-1002</a>.
+          </p>
+        {% endif %}
+      </div>
+
+      <div class="today__list">
+        {% if suggested %}
+          <ol class="steps">
+            {% for tea in suggested %}
+              <li>
+                <h3 class="h3"><a class="link" href="{{ tea.get_absolute_url }}">{{ tea.name }}</a></h3>
+                <p>
+                  {{ tea.origin }}. {{ tea.caffeine_phrase|capfirst }}.
+                  <span class="num">{{ tea.brew_temp_c }}&nbsp;C for {{ tea.steep_label }}</span>,
+                  {{ tea.grams_per_200ml|floatformat:"-1" }}&nbsp;g per 200&nbsp;ml.
+                </p>
+              </li>
+            {% endfor %}
+          </ol>
+        {% else %}
+          <p class="muted">The catalogue is unavailable just now. The Status page will say why.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{# --------------------------------------------------- Categories ---- #}
+<section class="section reveal">
+  <div class="shell">
+    <p class="eyebrow">The shelves</p>
+    <h2 class="h2" style="margin-bottom:2.5rem">Eight kinds of leaf</h2>
+
+    <div class="strip">
+      {% for category in categories %}
+        <a class="strip__item" href="/teas/?category={{ category.key }}">
+          <figure>
+            {% if category.example %}
+              <img src="{% static category.example.image_name %}" width="400" height="500"
+                   loading="lazy" alt="{{ category.label }} tea, illustrated.">
+            {% endif %}
+            <figcaption>
+              <span class="strip__name">{{ category.label }}</span>
+              <span class="small muted num">{{ category.count }}</span>
+            </figcaption>
+          </figure>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# -------------------------------------------- How the assistant helps #}
+<section class="section reveal">
+  <div class="shell">
+    <div class="grid12">
+      <div style="grid-column: 1 / -1">
+        <p class="eyebrow">The assistant</p>
+        <h2 class="h2" style="max-width:18ch">
+          It reads our catalogue, not the internet
+        </h2>
+      </div>
+      <div style="grid-column: 1 / -1">
+        <ol class="steps">
+          <li>
+            <h3 class="h3">It recommends from real stock</h3>
+            <p>
+              Ask for something calming, something iced, or something with no
+              caffeine. It ranks the twenty-eight teas on the shelf and tells you
+              why it chose them. It cannot suggest a tea we do not sell.
+            </p>
+          </li>
+          <li>
+            <h3 class="h3">It gives our brewing figures</h3>
+            <p>
+              Temperature, weight, time and how many re-steeps, read straight from
+              the same row the tea page shows you. If the two ever disagree,
+              something is broken, and it is not the tea.
+            </p>
+          </li>
+          <li>
+            <h3 class="h3">It admits when it does not know</h3>
+            <p>
+              For anything outside the shop's own notes it says so and opens a
+              support ticket with a number, rather than guessing. It will also
+              explain any error code this site shows you.
+            </p>
+          </li>
+        </ol>
+        <p style="margin-top:2rem">
+          <button type="button" class="button button--quiet" data-open-assistant
+                  data-prompt="Recommend a tea for tonight">
+            Try it now
+          </button>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ----------------------------------------------------- Featured ---- #}
+{% if featured %}
+<section class="section reveal">
+  <div class="shell">
+    <div class="grid12 featured__grid">
+      <div class="featured__art">
+        <a href="{{ featured.get_absolute_url }}">
+          <img src="{% static featured.image_name %}" width="400" height="500"
+               loading="lazy" alt="{{ featured.name }}, illustrated.">
+        </a>
+      </div>
+      <div class="featured__text">
+        <p class="eyebrow">On the counter</p>
+        <h2 class="h2">{{ featured.name }}</h2>
+        <p class="lede" style="margin-top:1rem">{{ featured.description }}</p>
+        <ul class="notes">
+          {% for note in featured.note_list %}<li>{{ note }}</li>{% endfor %}
+        </ul>
+        <div class="price-row">
+          <span class="price num">&#8377;{{ featured.price_inr_50g }}</span>
+          <span class="small muted">per 50 g</span>
+          <a class="button button--quiet" href="{{ featured.get_absolute_url }}">Read about it</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{# ---------------------------------------------------- Newsletter ---- #}
+<section class="section newsletter">
+  <div class="shell">
+    <div class="grid12 newsletter__grid">
+      <div class="newsletter__text">
+        <p class="eyebrow">Once a month</p>
+        <h2 class="h2">What arrived, and what to do with it</h2>
+        <p class="lede" style="margin-top:1rem">
+          One letter a month: what we bought, what it tastes like, and how to brew
+          it. No offers. Leave whenever you like, in one click.
+        </p>
+      </div>
+
+      <form class="newsletter__form" data-subscribe-form novalidate>
+        {% csrf_token %}
+        <div class="newsletter__row">
+          <div>
+            <label for="sub-name">First name</label>
+            <input type="text" id="sub-name" name="first_name" autocomplete="given-name" required>
+          </div>
+          <div>
+            <label for="sub-email">Email</label>
+            <input type="email" id="sub-email" name="email" autocomplete="email" required>
+          </div>
+        </div>
+
+        <label class="checkbox" style="margin-top:1.25rem">
+          <input type="checkbox" name="consent" value="yes">
+          <span>
+            Yes, send me the monthly letter. I can unsubscribe at any time, and
+            Maison Tisane will not pass my address to anyone else.
+          </span>
+        </label>
+
+        <button type="submit" class="button newsletter__submit">Subscribe</button>
+        <p class="newsletter__status" data-subscribe-status role="status"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

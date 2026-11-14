@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="shell" style="padding-top:clamp(2.5rem,5vw,4rem);padding-bottom:var(--section)">
+  <div class="narrow">
+    <p class="eyebrow">Support</p>
+    <h1 class="h1">Ask a person</h1>
+    <p class="lede" style="margin-top:1.25rem">
+      One of us reads every ticket, usually the same working day. If the assistant
+      could not answer you it has already opened one of these with your question in it.
+    </p>
+
+    {% if errors.form %}
+      <p class="form-note" role="alert">{{ errors.form }}</p>
+    {% endif %}
+
+    <form method="post" action="/support/" novalidate style="margin-top:2.5rem">
+      {% csrf_token %}
+
+      <div class="field">
+        <label for="support-email">Your email</label>
+        <input type="email" id="support-email" name="email" autocomplete="email"
+               value="{{ form_data.email }}" required
+               {% if errors.email %}aria-invalid="true" aria-describedby="support-email-error"{% endif %}>
+        {% if errors.email %}
+          <p class="field__error" id="support-email-error">{{ errors.email }}</p>
+        {% else %}
+          <p class="field__hint">We use it to reply to this ticket and for nothing else.</p>
+        {% endif %}
+      </div>
+
+      <div class="field">
+        <label for="support-question">What has happened?</label>
+        <textarea id="support-question" name="question" rows="6" required
+                  {% if errors.question %}aria-invalid="true" aria-describedby="support-question-error"{% endif %}
+                  >{{ form_data.question }}</textarea>
+        {% if errors.question %}
+          <p class="field__error" id="support-question-error">{{ errors.question }}</p>
+        {% else %}
+          <p class="field__hint">
+            If you saw an error code, include it. If it was about an order, the
+            order number helps.
+          </p>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="button">Open a ticket</button>
+    </form>
+
+    <div class="error-banner" style="margin-top:3rem">
+      <p>
+        Quicker for most things: the assistant answers shipping, returns, brewing
+        and storage questions straight away, and explains any error code.
+      </p>
+      <button type="button" class="button button--quiet button--small" data-open-assistant>
+        Ask the assistant
+      </button>
+    </div>
+  </div>
+</div>
+{% endblock %}

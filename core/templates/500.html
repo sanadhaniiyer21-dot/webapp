@@ -1,0 +1,88 @@
+{% load static %}<!doctype html>
+{% comment %}
+The 500 page, and the 503 shown when the database is unreachable.
+
+Hard rules for this file, because it is the page that must work when nothing
+else does:
+
+  * no database query, directly or through a context processor
+  * no request object (it is rendered with render_to_string)
+  * no font, script, style or image from another origin
+  * readable with inline CSS alone, if site.css never arrives
+
+Everything it needs comes from static_fallback() in core/errors.py.
+{% endcomment %}
+<html lang="en-IN">
+<head>
+<title>{{ code }} {{ title }} | Maison Tisane</title>
+{% include "core/_standalone_head.html" %}
+</head>
+<body data-page="/error/{{ code }}/">
+
+<div id="offline-strip" class="offline-strip" hidden role="status">
+  You are offline. You are reading a saved copy of this page.
+</div>
+
+{% include "core/_standalone_masthead.html" %}
+
+<main id="main">
+  <div class="shell error-page">
+    <p class="error-page__code">Error {{ code }}</p>
+
+    {% if is_503 %}
+      <h1 class="error-page__title">A part we depend on is not answering</h1>
+      <p class="error-page__meaning">
+        The site is running, but it cannot reach its database, so it cannot read
+        the catalogue or save anything. This is not a fault on your side and
+        nothing you sent has been lost.
+      </p>
+      <div class="error-page__fix">
+        <p class="eyebrow">What to do</p>
+        <p>
+          Wait a few minutes and reload. The Status page checks the database
+          directly and will say when it is back.
+        </p>
+      </div>
+    {% else %}
+      <h1 class="error-page__title">Something broke on our side</h1>
+      <p class="error-page__meaning">{{ meaning }}</p>
+      <div class="error-page__fix">
+        <p class="eyebrow">What to do</p>
+        <p>
+          Reload the page. If it happens again, tell us what you were doing and
+          we will fix it. The assistant can open the ticket for you.
+        </p>
+      </div>
+    {% endif %}
+
+    <div class="error-page__actions">
+      <a class="button" href="/">Back to the shop</a>
+      <a class="button button--quiet" href="/health/">Check the status</a>
+    </div>
+
+    <div class="error-banner">
+      <p>
+        The assistant keeps working during this. It explains error codes from a
+        copy saved on your device, and can open a support ticket.
+      </p>
+      <button type="button" class="button button--quiet button--small"
+              data-open-assistant data-prompt="What does error {{ code }} mean?">
+        Ask the assistant about this error
+      </button>
+    </div>
+
+    <nav class="err-links" aria-label="Elsewhere">
+      <a class="small" href="/teas/">Teas</a>
+      <a class="small" href="/faq/">Questions and answers</a>
+      <a class="small" href="/support/">Support</a>
+      <a class="small" href="/error-codes/">Error codes</a>
+    </nav>
+  </div>
+</main>
+
+{% include "core/_assistant.html" %}
+
+<script src="{% static 'core/site.js' %}" type="module"></script>
+<script src="{% static 'core/chat.js' %}" type="module"></script>
+</body>
+</html>

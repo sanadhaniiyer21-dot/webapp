@@ -1,0 +1,28 @@
+{% load static %}
+{% comment %}
+One tea in the grid. Used by the server render and mirrored by teas.js when
+filters change, so both paths produce identical markup.
+{% endcomment %}
+<article class="tea-card-wrap">
+  <a class="tea-card" href="{{ tea.get_absolute_url }}">
+    <div class="tea-card__art">
+      <img src="{% static tea.image_name %}" width="400" height="500" loading="lazy"
+           alt="{{ tea.name }}, illustrated.">
+    </div>
+    <div class="tea-card__body">
+      <h3 class="tea-card__name">{{ tea.name }}</h3>
+      <p class="tea-card__origin">{{ tea.origin }}</p>
+      <p class="tea-card__notes">{{ tea.flavour_notes }}</p>
+      <div class="tea-card__foot">
+        <span class="tea-card__price num">&#8377;{{ tea.price_inr_50g }}</span>
+        {% if tea.in_stock %}
+          <span class="small muted num">{{ tea.brew_temp_c }} C</span>
+        {% else %}
+          <span class="tea-card__out">Out of stock</span>
+        {% endif %}
+      </div>
+    </div>
+  </a>
+  <button type="button" class="shortlist-button" data-shortlist="{{ tea.slug }}"
+          aria-pressed="false">Add to my shortlist</button>
+</article>

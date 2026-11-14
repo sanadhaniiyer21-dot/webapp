@@ -1,0 +1,129 @@
+{% comment %}
+Critical CSS, inlined.
+
+The standalone pages (error.html, 500.html, offline.html) are the ones most
+likely to be seen when something is wrong with the network or the server. If
+core/site.css never arrives, this keeps them readable and keeps the assistant
+usable. It intentionally duplicates a small part of site.css rather than
+depending on it.
+{% endcomment %}
+<style>
+  :root {
+    --paper:#F3EEE4; --paper-deep:#E9E2D3; --paper-sunk:#DED5C3;
+    --ink:#1A1916; --ink-soft:#5B574E; --hairline:#D6CEBD;
+    --green:#2B3A2C; --green-ink:#EDE7DA; --accent:#B5552F; --accent-quiet:#8E411F;
+    --serif:'Cormorant Garamond','Iowan Old Style',Georgia,'Times New Roman',serif;
+    --sans:'Inter Tight',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+    --mono:ui-monospace,'Cascadia Mono',Menlo,Consolas,monospace;
+    --t-small:.875rem; --t-micro:.75rem;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --paper:#171C17; --paper-deep:#1E241E; --paper-sunk:#262D26;
+      --ink:#ECE6DA; --ink-soft:#A49E90; --hairline:#39423A;
+      --green:#0F130F; --accent:#D9815A; --accent-quiet:#E59B78;
+    }
+  }
+  :root[data-theme='dark'] {
+    --paper:#171C17; --paper-deep:#1E241E; --paper-sunk:#262D26;
+    --ink:#ECE6DA; --ink-soft:#A49E90; --hairline:#39423A;
+    --green:#0F130F; --accent:#D9815A; --accent-quiet:#E59B78;
+  }
+  *,*::before,*::after { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:1.0625rem; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  svg { display:block; }
+  h1,h2,p,ul { margin:0; }
+  ul { padding:0; list-style:none; }
+  a { color:inherit; }
+  :focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+  .visually-hidden {
+    position:absolute; width:1px; height:1px; margin:-1px; padding:0;
+    overflow:hidden; clip-path:inset(50%); white-space:nowrap; border:0;
+  }
+  .shell { width:100%; max-width:76rem; margin-inline:auto; padding-inline:1rem; }
+  @media (min-width:48rem) { .shell { padding-inline:2rem; } }
+  @media (min-width:72rem) { .shell { padding-inline:3rem; } }
+
+  .err-head { border-bottom:1px solid var(--hairline); }
+  .err-head__inner {
+    display:flex; align-items:center; justify-content:space-between;
+    gap:1rem; height:64px;
+  }
+  .err-mark {
+    display:inline-flex; align-items:center; gap:.6rem;
+    text-decoration:none; color:var(--ink);
+    font-family:var(--serif); font-size:1.35rem;
+  }
+  .err-mark svg { color:var(--green); }
+  :root[data-theme='dark'] .err-mark svg { color:var(--accent); }
+  .err-head a.small { font-size:var(--t-small); }
+
+  .error-page {
+    min-height:72svh; display:grid; align-content:center;
+    padding-block:clamp(3rem,8vw,6rem);
+  }
+  .error-page__code {
+    font-family:var(--mono); font-size:var(--t-small);
+    letter-spacing:.18em; color:var(--accent); font-variant-numeric:tabular-nums;
+  }
+  .error-page__title {
+    font-family:var(--serif); font-weight:400;
+    font-size:clamp(2.3rem,1.3rem + 4.1vw,4.4rem);
+    line-height:1.02; letter-spacing:-.021em; text-wrap:balance;
+    margin:1rem 0 1.25rem;
+  }
+  .error-page__meaning {
+    font-size:clamp(1.05rem,.97rem + .42vw,1.3rem); line-height:1.5;
+    color:var(--ink-soft); max-width:46ch;
+  }
+  .error-page__fix {
+    margin-top:2rem; padding-top:1.5rem;
+    border-top:1px solid var(--hairline); max-width:50ch;
+  }
+  .error-page__actions { display:flex; flex-wrap:wrap; gap:1rem; margin-top:2rem; }
+  .error-banner {
+    border:1px solid var(--hairline); border-left:3px solid var(--accent);
+    padding:1rem 1.25rem; margin-top:2rem; max-width:50ch;
+    background:var(--paper-deep);
+  }
+  .error-banner p { font-size:var(--t-small); color:var(--ink-soft); }
+  .error-banner button { margin-top:.9rem; }
+
+  .button {
+    display:inline-flex; align-items:center; gap:.6rem;
+    font:inherit; font-size:var(--t-small); font-weight:500; letter-spacing:.04em;
+    padding:.85rem 1.5rem; min-height:44px;
+    border:1px solid var(--ink); background:var(--ink); color:var(--paper);
+    text-decoration:none; cursor:pointer;
+  }
+  .button:hover { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .button--quiet { background:transparent; color:var(--ink); border-color:var(--hairline); }
+  .button--quiet:hover { background:transparent; color:var(--accent); border-color:var(--accent); }
+  .button--small { padding:.55rem 1rem; min-height:38px; font-size:var(--t-micro); }
+
+  .small { font-size:var(--t-small); line-height:1.5; }
+  .muted { color:var(--ink-soft); }
+  .eyebrow {
+    font-size:var(--t-micro); font-weight:500; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--ink-soft); margin:0 0 .9rem;
+  }
+  .linklike {
+    font:inherit; color:inherit; background:none; border:0; padding:0;
+    cursor:pointer; border-bottom:1px solid var(--hairline);
+  }
+  .linklike:hover { color:var(--accent); border-bottom-color:var(--accent); }
+  .err-links { display:flex; flex-wrap:wrap; gap:1rem 2rem; margin-top:2.5rem;
+               padding-top:1.5rem; border-top:1px solid var(--hairline); }
+  .err-links a { font-size:var(--t-small); }
+
+  .offline-strip {
+    position:fixed; left:0; right:0; bottom:0; z-index:99;
+    background:var(--ink); color:var(--paper);
+    font-size:var(--t-small); text-align:center; padding:.6rem 1rem;
+  }
+  .offline-strip[hidden] { display:none; }
+</style>

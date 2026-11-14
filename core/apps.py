@@ -1,0 +1,10 @@
+from django.apps import AppConfig
+
+
+class CoreConfig(AppConfig):
+    name = "core"
+    default_auto_field = "django.db.models.BigAutoField"
+
+    def ready(self):
+        # Register signals for MongoDB user sync.
+        import core.signals  # noqa: F401

@@ -1,0 +1,70 @@
+{% load static %}<!doctype html>
+{% comment %}
+Generic error page: 400, 403, 405, 429, 502, 503 and 504. Standalone by
+design. See core/templates/core/_standalone_head.html for why.
+{% endcomment %}
+<html lang="en-IN">
+<head>
+<title>{{ code }} {{ title }} | Maison Tisane</title>
+{% include "core/_standalone_head.html" %}
+</head>
+<body data-page="/error/{{ code }}/">
+
+<div id="offline-strip" class="offline-strip" hidden role="status">
+  You are offline. You are reading a saved copy of this page.
+</div>
+
+{% include "core/_standalone_masthead.html" %}
+
+<main id="main">
+  <div class="shell error-page">
+    <p class="error-page__code">Error {{ code }}</p>
+    <h1 class="error-page__title">{{ title }}</h1>
+    <p class="error-page__meaning">{{ meaning }}</p>
+
+    {% if note %}
+      <p class="error-page__meaning" style="margin-top:1rem">{{ note }}</p>
+    {% endif %}
+
+    {% if fix %}
+      <div class="error-page__fix">
+        <p class="eyebrow">What to do</p>
+        <p>{{ fix }}</p>
+      </div>
+    {% endif %}
+
+    <div class="error-page__actions">
+      <a class="button" href="/">Back to the shop</a>
+      <a class="button button--quiet" href="/error-codes/">All error codes</a>
+    </div>
+
+    {% comment %}
+    The button the launch checklist looks for. It opens the assistant with the
+    question already typed, and sends it.
+    {% endcomment %}
+    <div class="error-banner">
+      <p>
+        The assistant can explain this code in more detail, and open a support
+        ticket for you if it keeps happening.
+      </p>
+      <button type="button" class="button button--quiet button--small"
+              data-open-assistant data-prompt="What does error {{ code }} mean?">
+        Ask the assistant about this error
+      </button>
+    </div>
+
+    <nav class="err-links" aria-label="Elsewhere">
+      <a class="small" href="/teas/">Teas</a>
+      <a class="small" href="/faq/">Questions and answers</a>
+      <a class="small" href="/support/">Support</a>
+      <a class="small" href="/health/">Status</a>
+    </nav>
+  </div>
+</main>
+
+{% include "core/_assistant.html" %}
+
+<script src="{% static 'core/site.js' %}" type="module"></script>
+<script src="{% static 'core/chat.js' %}" type="module"></script>
+</body>
+</html>

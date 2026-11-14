@@ -1,0 +1,124 @@
+{% load static %}<!doctype html>
+<html lang="en-IN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ page_title|default:site_name }}{% endblock %} | {{ site_name }}</title>
+<meta name="description" content="{% block description %}{{ meta_description|default:site_tagline }}{% endblock %}">
+<meta name="theme-color" content="#F3EEE4">
+
+{# Self-hosted fonts. Preloading only the two faces used above the fold. #}
+<link rel="preload" href="{% static 'core/fonts/cormorant-garamond-400-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{% static 'core/fonts/inter-tight-400-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{% static 'core/fonts.css' %}">
+<link rel="stylesheet" href="{% static 'core/site.css' %}">
+<link rel="icon" href="{% static 'core/img/favicon.svg' %}" type="image/svg+xml">
+
+{# Set the theme before first paint so a dark-mode visitor never sees a white flash. #}
+<script>
+  (function () {
+    try {
+      var saved = localStorage.getItem('maison-theme');
+      if (saved === 'dark' || saved === 'light') {
+        document.documentElement.setAttribute('data-theme', saved);
+      }
+    } catch (e) { /* private mode: fall back to the media query */ }
+  })();
+</script>
+</head>
+
+<body data-page="{% block body_page %}{{ current_path }}{% endblock %}">
+
+<a class="skip-link" href="#main">Skip to the content</a>
+
+<div id="offline-strip" class="offline-strip" hidden role="status">
+  You are offline. You are reading a saved copy of this page.
+</div>
+
+<header class="site-header">
+  <div class="shell site-header__inner">
+    <a class="wordmark" href="/">
+      <svg class="wordmark__mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false" width="22" height="22">
+        <path d="M24 44 C24 28 24 16 24 5" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+        <path d="M24 30 C14 29 8 23 7 14 C17 14 23 20 24 30 Z" fill="currentColor"/>
+        <path d="M24 22 C34 21 40 15 41 6 C31 6 25 12 24 22 Z" fill="currentColor" opacity="0.7"/>
+      </svg>
+      <span class="wordmark__text">Maison Tisane</span>
+    </a>
+
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+      <span class="menu-toggle__label">Menu</span>
+      <span class="menu-toggle__bars" aria-hidden="true"><i></i><i></i></span>
+    </button>
+
+    <nav id="site-nav" class="site-nav" aria-label="Main">
+      <ul class="site-nav__list">
+        {% for item in nav %}
+          <li><a href="{{ item.path }}"{% if current_path == item.path %} aria-current="page"{% endif %}>{{ item.label }}</a></li>
+        {% endfor %}
+      </ul>
+      <div class="site-nav__end">
+        {% if user.is_authenticated %}
+          <a class="site-nav__account" href="/accounts/">Account</a>
+        {% else %}
+          <a class="site-nav__account" href="/accounts/login/">Sign in</a>
+        {% endif %}
+        <button class="theme-toggle" type="button" aria-label="Switch between light and dark">
+          <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" focusable="false">
+            <path class="theme-toggle__sun" d="M12 5v-2M12 21v-2M5 12H3M21 12h-2M6.3 6.3 4.9 4.9M19.1 19.1l-1.4-1.4M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <circle class="theme-toggle__sun" cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6" fill="none"/>
+            <path class="theme-toggle__moon" d="M20 14.5A8 8 0 0 1 9.5 4 8.2 8.2 0 1 0 20 14.5Z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="shell">
+    <div class="site-footer__grid">
+      <div class="site-footer__about">
+        <p class="lede">{{ site_tagline }}</p>
+        <p class="small">
+          A small shop in Coimbatore. We sell twenty-eight teas and tisanes, we
+          tell you how to brew them, and we take them back if you do not like them.
+        </p>
+      </div>
+
+      <nav class="site-footer__nav" aria-label="Pages">
+        <h2 class="eyebrow">Pages</h2>
+        <ul>
+          {% for item in nav %}<li><a href="{{ item.path }}">{{ item.label }}</a></li>{% endfor %}
+        </ul>
+      </nav>
+
+      <nav class="site-footer__nav" aria-label="Help">
+        <h2 class="eyebrow">Help</h2>
+        <ul>
+          {% for item in footer_links %}<li><a href="{{ item.path }}">{{ item.label }}</a></li>{% endfor %}
+          <li><button type="button" class="linklike" data-open-assistant>Ask the assistant</button></li>
+        </ul>
+      </nav>
+    </div>
+
+    <p class="site-footer__wordmark" aria-hidden="true">Maison Tisane</p>
+
+    <p class="site-footer__legal small">
+      <span>&copy; {{ current_year }} Maison Tisane</span>
+      <span>Version {{ app_version }}</span>
+    </p>
+  </div>
+</footer>
+
+{% include "core/_assistant.html" %}
+
+<script src="{% static 'core/site.js' %}" type="module"></script>
+<script src="{% static 'core/chat.js' %}" type="module"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

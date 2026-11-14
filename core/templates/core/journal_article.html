@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<article class="shell section--tight" style="padding-top:clamp(2.5rem,5vw,4rem);padding-bottom:var(--section)">
+  <div class="article">
+    <p class="small muted"><a class="link" href="/journal/">Journal</a></p>
+    <h1 class="h1" style="margin-top:1rem">{{ article.title }}</h1>
+    <p class="article__stand">{{ article.standfirst }}</p>
+    <p class="eyebrow" style="margin-top:1.5rem">{{ article.reading_minutes }} minute read</p>
+
+    <div class="article__body prose">
+      {% for paragraph in article.body %}<p>{{ paragraph }}</p>{% endfor %}
+    </div>
+
+    <div class="article__foot">
+      <p class="small muted">
+        Questions about any of this are a good use of the assistant. It reads the
+        same catalogue these pieces are written from.
+      </p>
+      <p style="margin-top:1rem">
+        <button type="button" class="button button--quiet button--small" data-open-assistant>
+          Ask the assistant
+        </button>
+      </p>
+    </div>
+
+    {% if others %}
+      <nav class="article__foot" aria-label="More from the journal">
+        <p class="eyebrow">Also in the journal</p>
+        <ul>
+          {% for other in others %}
+            <li style="margin-bottom:0.6rem">
+              <a class="link" href="/journal/{{ other.slug }}/">{{ other.title }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    {% endif %}
+  </div>
+</article>
+{% endblock %}

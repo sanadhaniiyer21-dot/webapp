@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="shell section--tight" style="padding-top:clamp(2.5rem,5vw,4rem)">
+  <p class="eyebrow">Journal</p>
+  <h1 class="h1" style="max-width:14ch">Four things worth knowing</h1>
+  <p class="lede" style="margin-top:1.25rem">
+    Written at the counter, mostly in answer to questions people actually ask.
+    None of it is sponsored and none of it is trying to sell you a second tin.
+  </p>
+</div>
+
+<div class="shell" style="padding-bottom:var(--section)">
+  <ul class="journal-list">
+    {% for article in articles %}
+      <li>
+        <a href="/journal/{{ article.slug }}/">
+          <span class="journal-list__index num">{{ forloop.counter|stringformat:"02d" }}</span>
+          <span>
+            <span class="journal-list__title">{{ article.title }}</span>
+            <span class="journal-list__stand">{{ article.standfirst }}</span>
+          </span>
+          <span class="journal-list__time">{{ article.reading_minutes }} min read</span>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

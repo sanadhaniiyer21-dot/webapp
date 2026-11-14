@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="shell" style="padding-top:clamp(2.5rem,5vw,4rem);padding-bottom:var(--section)">
+  <div class="status-head">
+    <div>
+      <p class="eyebrow">Account</p>
+      <h1 class="h1">{{ user.username }}</h1>
+    </div>
+    <form method="post" action="/accounts/logout/">
+      {% csrf_token %}
+      <button type="submit" class="button button--quiet button--small">Sign out</button>
+    </form>
+  </div>
+
+  <div class="grid12" style="margin-top:3rem">
+    <div style="grid-column:1 / -1">
+      <h2 class="h2">Your favourites</h2>
+
+      {% if favourites %}
+        <ul class="favourites" style="margin-top:2rem;max-width:40rem">
+          {% for favourite in favourites %}
+            <li>
+              <img src="{% static favourite.tea.image_name %}" width="72" height="90"
+                   loading="lazy" alt="">
+              <div style="flex:1 1 auto">
+                <h3 class="h3"><a class="link" href="{{ favourite.tea.get_absolute_url }}">{{ favourite.tea.name }}</a></h3>
+                <p class="small muted">
+                  {{ favourite.tea.origin }}.
+                  <span class="num">{{ favourite.tea.brew_temp_c }} C for {{ favourite.tea.steep_label }}</span>
+                </p>
+              </div>
+              <form method="post" action="{% url 'toggle_favourite' favourite.tea.slug %}">
+                {% csrf_token %}
+                <button type="submit" class="shortlist-button">Remove</button>
+              </form>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="state" style="margin-top:2rem">
+          <h3 class="h3">Nothing saved yet</h3>
+          <p>
+            Open any tea and choose Save to your account. The assistant will then
+            lean towards what you have saved when it recommends something.
+          </p>
+          <a class="button button--quiet button--small" href="/teas/">Browse the teas</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="shell" style="padding-top:clamp(2.5rem,5vw,4rem);padding-bottom:var(--section)">
+  <p class="eyebrow">Status</p>
+
+  <div class="status-head">
+    <h1 class="h1">
+      {% if status == 'ok' %}Everything is working
+      {% elif status == 'degraded' %}Working, with something reduced
+      {% else %}Something is down
+      {% endif %}
+    </h1>
+    <p class="small muted num">Version {{ version }}</p>
+  </div>
+
+  {% if status == 'degraded' %}
+    <p class="lede" style="margin-top:1.5rem;max-width:52ch">
+      The shop works normally. One optional part is not answering, which affects
+      how much the site records or how clever an answer is, not whether you can
+      read, search or order anything.
+    </p>
+  {% elif status == 'down' %}
+    <p class="lede" style="margin-top:1.5rem;max-width:52ch">
+      The database is not answering, so the site cannot read the catalogue. This
+      page is reporting a 503. Nothing you submitted was lost.
+    </p>
+  {% endif %}
+
+  <ul class="checks" style="margin-top:2.5rem">
+    <li>
+      <span class="checks__dot" data-state="{% if checks.database.ok %}ok{% else %}down{% endif %}"></span>
+      <span>Database</span>
+      <span class="checks__state">{% if checks.database.ok %}Working{% else %}Down{% endif %}</span>
+      <span class="checks__detail">
+        The catalogue, the FAQ, error codes and tickets. The site cannot run without it.
+        {{ checks.database.detail }}
+      </span>
+    </li>
+
+    <li>
+      <span class="checks__dot" data-state="{% if checks.mongodb.ok %}ok{% else %}warn{% endif %}"></span>
+      <span>Chat log store</span>
+      <span class="checks__state">{% if checks.mongodb.ok %}Working{% elif checks.mongodb.configured %}Unreachable{% else %}Not configured{% endif %}</span>
+      <span class="checks__detail">
+        MongoDB, used only to record assistant conversations and thumbs up or down.
+        When it is down the assistant answers exactly as usual and nothing is written.
+        {{ checks.mongodb.detail }}
+      </span>
+    </li>
+
+    <li>
+      <span class="checks__dot" data-state="{% if checks.assistant_model.ok %}ok{% else %}warn{% endif %}"></span>
+      <span>Assistant model</span>
+      <span class="checks__state">{% if checks.assistant_model.ok %}Key present{% else %}No key{% endif %}</span>
+      <span class="checks__detail">
+        {{ checks.assistant_model.detail }}. Model {{ checks.assistant_model.model }}.
+        Without it the assistant still answers from the FAQ, the catalogue and the
+        error code table, which is the condition
+        <a class="link" href="/error-codes/#code-SITE-1001">SITE-1001</a> describes.
+      </span>
+    </li>
+
+    <li>
+      <span class="checks__dot" data-state="{% if checks.weather_api.ok %}ok{% else %}warn{% endif %}"></span>
+      <span>Weather lookup</span>
+      <span class="checks__state">{% if checks.weather_api.ok %}Working{% else %}Falling back{% endif %}</span>
+      <span class="checks__detail">
+        Open-Meteo, with a three second limit, used for the Tea for today panel.
+        {{ checks.weather_api.detail }}. When it is slow we suggest by season instead,
+        which is <a class="link" href="/error-codes/#code-SITE-1002">SITE-1002</a>.
+      </span>
+    </li>
+  </ul>
+
+  {% if counts %}
+    <h2 class="h3" style="margin-top:3rem">What is in the database</h2>
+    <table class="spec" style="max-width:28rem">
+      <caption class="visually-hidden">Row counts</caption>
+      <tbody>
+        <tr><th scope="row">Teas</th><td class="num">{{ counts.teas }}</td></tr>
+        <tr><th scope="row">Questions answered</th><td class="num">{{ counts.faqs }}</td></tr>
+        <tr><th scope="row">Error codes</th><td class="num">{{ counts.error_codes }}</td></tr>
+        <tr><th scope="row">Support tickets</th><td class="num">{{ counts.tickets }}</td></tr>
+      </tbody>
+    </table>
+  {% endif %}
+
+  <p class="small muted" style="margin-top:2.5rem">
+    A machine-readable version of this page is at
+    <a class="link" href="/health/?format=json">/health/?format=json</a>.
+    It returns 200 while the database is reachable and 503 when it is not.
+  </p>
+</div>
+{% endblock %}

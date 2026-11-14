@@ -1,0 +1,58 @@
+{% load static %}<!doctype html>
+{% comment %}
+Shown when there is no connection and the page asked for was never visited.
+Precached by the service worker on install, so it is available offline by
+definition. Standalone, with no database access and nothing from another
+origin.
+{% endcomment %}
+<html lang="en-IN">
+<head>
+<title>You are offline | Maison Tisane</title>
+{% include "core/_standalone_head.html" %}
+</head>
+<body data-page="/offline/">
+
+{% include "core/_standalone_masthead.html" %}
+
+<main id="main">
+  <div class="shell error-page">
+    <p class="error-page__code">No connection</p>
+    <h1 class="error-page__title">You are offline</h1>
+    <p class="error-page__meaning">
+      This page was never loaded on this device, so there is no saved copy of it.
+      Pages you have already visited will still open, and so will the brew timer.
+    </p>
+
+    <div class="error-page__fix">
+      <p class="eyebrow">What still works</p>
+      <ul style="margin-top:.5rem">
+        <li style="padding:.4rem 0;border-top:1px solid var(--hairline)">Any page you have opened before</li>
+        <li style="padding:.4rem 0;border-top:1px solid var(--hairline)">The brew guide timer</li>
+        <li style="padding:.4rem 0;border-top:1px solid var(--hairline)">The assistant, for error codes, from a copy saved on this device</li>
+      </ul>
+    </div>
+
+    <div class="error-page__actions">
+      <button type="button" class="button" data-reload>Try again</button>
+      <a class="button button--quiet" href="/">Back to the shop</a>
+    </div>
+
+    <div class="error-banner">
+      <p>
+        The assistant can still explain any error code while you are offline. For
+        anything else it will say so plainly rather than guess.
+      </p>
+      <button type="button" class="button button--quiet button--small"
+              data-open-assistant data-prompt="Tell me about error codes">
+        Ask the assistant
+      </button>
+    </div>
+  </div>
+</main>
+
+{% include "core/_assistant.html" %}
+
+<script src="{% static 'core/site.js' %}" type="module"></script>
+<script src="{% static 'core/chat.js' %}" type="module"></script>
+</body>
+</html>

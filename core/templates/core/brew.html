@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="shell section--tight" style="padding-top:clamp(2.5rem,5vw,4rem)">
+  <p class="eyebrow">Brew guide</p>
+  <h1 class="h1" style="max-width:14ch">A timer that knows the numbers</h1>
+  <p class="lede" style="margin-top:1.25rem">
+    Pick a tea and the timer loads our figures for it, counts the first steep,
+    then adds thirty seconds for each one after that. It keeps working with no
+    connection.
+  </p>
+</div>
+
+<div class="shell" style="padding-bottom:var(--section)">
+  <div class="brew__layout">
+
+    {# ------------------------------------------------------- Timer ---- #}
+    <div>
+      <div class="field">
+        <label for="brew-tea">Tea</label>
+        <select id="brew-tea" data-brew-select>
+          {% for tea in teas %}
+            <option value="{{ tea.slug }}"
+                    data-temp="{{ tea.brew_temp_c }}"
+                    data-seconds="{{ tea.steep_seconds }}"
+                    data-grams="{{ tea.grams_per_200ml|floatformat:'-1' }}"
+                    data-resteeps="{{ tea.resteeps }}">{{ tea.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="timer">
+        <svg class="timer__ring" viewBox="0 0 200 200" role="img"
+             aria-label="Steep timer" data-brew-ring>
+          <circle class="timer__track" cx="100" cy="100" r="88" fill="none" stroke-width="6"/>
+          <circle class="timer__progress" cx="100" cy="100" r="88" fill="none" stroke-width="6"
+                  stroke-dasharray="552.9" stroke-dashoffset="0" data-brew-progress/>
+          <text x="100" y="100" text-anchor="middle" dominant-baseline="central"
+                class="timer__readout" fill="currentColor" data-brew-readout>3:00</text>
+        </svg>
+
+        <p class="timer__phase" data-brew-phase>First steep</p>
+
+        <div class="timer__actions">
+          <button type="button" class="button" data-brew-start>Start</button>
+          <button type="button" class="button button--quiet" data-brew-reset>Reset</button>
+          <button type="button" class="button button--quiet" data-brew-next hidden>Next steep</button>
+        </div>
+
+        <label class="checkbox" style="justify-content:center;margin-top:0.5rem">
+          <input type="checkbox" data-brew-sound>
+          <span>Play a short tone when the time is up</span>
+        </label>
+
+        <p class="small muted" data-brew-summary style="text-align:center"></p>
+      </div>
+    </div>
+
+    {# ------------------------------------------------------ Method ---- #}
+    <div>
+      <h2 class="h3" style="margin-bottom:1.5rem">The whole shelf, in numbers</h2>
+      <div style="overflow-x:auto">
+        <table class="method">
+          <caption class="visually-hidden">Brewing figures for every tea</caption>
+          <thead>
+            <tr>
+              <th scope="col">Tea</th>
+              <th scope="col">Water</th>
+              <th scope="col">Leaf</th>
+              <th scope="col">First steep</th>
+              <th scope="col">Re-steeps</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tea in teas %}
+              <tr>
+                <td class="method__name"><a class="link" href="{{ tea.get_absolute_url }}">{{ tea.name }}</a></td>
+                <td>{{ tea.brew_temp_c }} C</td>
+                <td>{{ tea.grams_per_200ml|floatformat:"-1" }} g</td>
+                <td>{{ tea.steep_label }}</td>
+                <td>{{ tea.resteeps }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="error-banner" style="margin-top:2.5rem">
+        <p>
+          Grams are per 200 ml. If your pot is 400 ml, double the leaf and keep the
+          time the same. Not sure which tea suits you? The assistant will narrow it down.
+        </p>
+        <button type="button" class="button button--quiet button--small" data-open-assistant
+                data-prompt="Which tea should I start with?">Ask the assistant</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'core/brew.js' %}" type="module"></script>
+{% endblock %}

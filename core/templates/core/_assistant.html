@@ -1,0 +1,87 @@
+{% load static %}
+{# ===================================================================== #}
+{# The tea sommelier.                                                     #}
+{#                                                                        #}
+{# Included by base.html, and separately by 404.html, 500.html,           #}
+{# error.html and offline.html, which do not extend base.html. That is    #}
+{# how the widget reaches every page, including the ones rendered with no #}
+{# database and no request context.                                       #}
+{#                                                                        #}
+{# The button text "Ask the assistant" is fixed wording. Do not reword it.#}
+{# ===================================================================== #}
+
+<button type="button" class="assistant-launch" data-assistant-launch
+        aria-expanded="false" aria-controls="assistant-panel">
+  <span class="assistant-launch__icon" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="19" height="19" focusable="false">
+      <path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.3 9 9 0 0 1-3.8-.8L3 20.5l1.6-4.3a8 8 0 0 1-1.1-4.1A8.4 8.4 0 0 1 12 3.2a8.4 8.4 0 0 1 9 8.3Z"
+            fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+      <path d="M8.5 11.5h7M8.5 14.5h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+  </span>
+  <span class="assistant-launch__label">Ask the assistant</span>
+</button>
+
+<div class="assistant-scrim" data-assistant-scrim hidden></div>
+
+<section id="assistant-panel" class="assistant" data-assistant-panel hidden
+         aria-labelledby="assistant-title" role="dialog" aria-modal="true">
+
+  <header class="assistant__head">
+    <div>
+      <h2 class="assistant__title" id="assistant-title">The tea sommelier</h2>
+      <p class="assistant__sub">Recommendations, brewing, shop questions, error codes.</p>
+    </div>
+    <button type="button" class="assistant__close" data-assistant-close aria-label="Close the assistant">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+        <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </header>
+
+  <div class="assistant__log" data-assistant-log role="log" aria-live="polite" aria-atomic="false">
+    <div class="bubble bubble--assistant">
+      <p>
+        I read this shop's own catalogue, so the temperatures and prices I give you
+        are the ones on the tins. Ask me for a recommendation, how to brew something,
+        a shop question, or what an error code means.
+      </p>
+    </div>
+  </div>
+
+  <div class="assistant__chips" data-assistant-chips>
+    <button type="button" class="chip" data-prompt="Recommend a tea for tonight">Recommend a tea for tonight</button>
+    <button type="button" class="chip" data-prompt="How do I brew oolong?">How do I brew oolong?</button>
+    <button type="button" class="chip" data-prompt="What does error 404 mean?">Error 404</button>
+    <button type="button" class="chip" data-prompt="How do I contact support?">Support</button>
+  </div>
+
+  <form class="assistant__form" data-assistant-form>
+    <div class="assistant__email" data-assistant-email hidden>
+      <label for="assistant-email">Your email, if you would like a reply to a ticket</label>
+      <input type="email" id="assistant-email" name="email" autocomplete="email"
+             placeholder="you@example.com" data-assistant-email-input>
+    </div>
+
+    <div class="assistant__row">
+      <label class="visually-hidden" for="assistant-input">Your question</label>
+      <textarea id="assistant-input" data-assistant-input rows="1" maxlength="500"
+                placeholder="Ask about a tea, brewing, an order, or an error code"
+                autocomplete="off"></textarea>
+      <button type="submit" class="assistant__send" data-assistant-send>
+        <span class="visually-hidden">Send</span>
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+          <path d="M4 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8"
+                fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="assistant__foot">
+      <button type="button" class="linklike small" data-assistant-email-toggle>
+        Add an email for a reply
+      </button>
+      <span class="assistant__count small" data-assistant-count aria-hidden="true">0 / 500</span>
+    </div>
+  </form>
+</section>

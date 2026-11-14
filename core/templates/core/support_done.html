@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="shell" style="padding-top:clamp(2.5rem,5vw,4rem);padding-bottom:var(--section)">
+  <div class="narrow">
+    <p class="eyebrow">Ticket opened</p>
+    <p class="ticket-number num">#{{ ticket.pk }}</p>
+    <h1 class="h2" style="margin-top:1.5rem">That is with us now</h1>
+    <p class="lede" style="margin-top:1.25rem">
+      Keep the number above. We will reply to
+      <strong>{{ ticket.email }}</strong>, usually the same working day and always
+      within two.
+    </p>
+
+    <table class="spec" style="margin-top:2.5rem">
+      <caption class="visually-hidden">Your ticket</caption>
+      <tbody>
+        <tr><th scope="row">Reference</th><td class="num">#{{ ticket.pk }}</td></tr>
+        <tr><th scope="row">Opened</th><td>{{ ticket.created_at|date:"j F Y, H:i" }}</td></tr>
+        <tr><th scope="row">Status</th><td>{{ ticket.get_status_display }}</td></tr>
+      </tbody>
+    </table>
+
+    <div class="error-page__actions">
+      <a class="button" href="/teas/">Back to the teas</a>
+      <a class="button button--quiet" href="/faq/">Read the FAQ</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

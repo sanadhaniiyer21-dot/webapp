@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="shell section--tight" style="padding-top:clamp(2.5rem,5vw,4rem)">
+  <p class="eyebrow">Error codes</p>
+  <h1 class="h1" style="max-width:16ch">Every error this site can show you</h1>
+  <p class="lede" style="margin-top:1.25rem">
+    Written for a person, not for a developer. Codes beginning with SITE are ours
+    and describe a part of this site working in a reduced way rather than a
+    failure you need to act on.
+  </p>
+  <p style="margin-top:1.5rem">
+    <button type="button" class="button button--quiet" data-open-assistant
+            data-prompt="Tell me about error codes">
+      Ask the assistant about an error
+    </button>
+  </p>
+</div>
+
+<div class="shell" style="padding-bottom:var(--section)">
+  {% if codes %}
+    <ul class="codes">
+      {% for code in codes %}
+        <li id="code-{{ code.code }}">
+          <p class="codes__code">{{ code.code }}</p>
+          <div>
+            <h2 class="codes__title">{{ code.title }}</h2>
+            <p class="codes__meaning">{{ code.meaning }}</p>
+            <p class="codes__fix"><strong>What to do:</strong> {{ code.fix }}</p>
+            <p class="codes__actions">
+              <button type="button" class="linklike small" data-open-assistant
+                      data-prompt="What does error {{ code.code }} mean?">
+                Ask the assistant about this error
+              </button>
+              {% if code.code != 'SITE-1001' and code.code != 'SITE-1002' %}
+                <a class="linklike small" href="/error/{{ code.code }}/"
+                   style="margin-left:1.25rem">See the page</a>
+              {% endif %}
+            </p>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <div class="state">
+      <h3 class="h3">The code list is unavailable</h3>
+      <p>
+        The database is not answering, which is itself a 503. The Status page will
+        say more.
+      </p>
+      <a class="button button--quiet button--small" href="/health/">Open the status page</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

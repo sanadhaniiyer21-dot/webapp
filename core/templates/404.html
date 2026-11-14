@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% comment %}
+The 404 extends base.html on purpose: a wrong address almost always means a
+healthy site and a healthy database, so the visitor should get the real
+navigation and a way back in. The 500 and 503 pages are standalone instead,
+because they cannot assume either of those things.
+{% endcomment %}
+
+{% block title %}404 Not Found{% endblock %}
+{% block description %}There is nothing at this address.{% endblock %}
+
+{% block content %}
+<div class="shell error-page">
+  <p class="error-page__code">Error 404</p>
+  <h1 class="error-page__title">There is nothing at this address</h1>
+  <p class="error-page__meaning">{{ meaning }}</p>
+
+  {% if fix %}
+    <div class="error-page__fix">
+      <p class="eyebrow">What to do</p>
+      <p>{{ fix }}</p>
+    </div>
+  {% endif %}
+
+  <div class="error-page__actions">
+    <a class="button" href="/teas/">Browse the teas</a>
+    <a class="button button--quiet" href="/">Back to the shop</a>
+  </div>
+
+  <div class="error-banner">
+    <p>
+      If you were looking for a particular tea, give the assistant its name, or
+      describe it. It searches the real catalogue.
+    </p>
+    <button type="button" class="button button--quiet button--small"
+            data-open-assistant data-prompt="What does error 404 mean?">
+      Ask the assistant about this error
+    </button>
+  </div>
+
+  <nav class="err-links" aria-label="Elsewhere">
+    <a class="small" href="/faq/">Questions and answers</a>
+    <a class="small" href="/brew/">Brew guide</a>
+    <a class="small" href="/journal/">Journal</a>
+    <a class="small" href="/error-codes/">Error codes</a>
+  </nav>
+</div>
+{% endblock %}

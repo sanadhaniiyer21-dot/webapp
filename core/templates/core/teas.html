@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="shell section--tight" style="padding-top:clamp(2.5rem,5vw,4rem)">
+  <p class="eyebrow">The catalogue</p>
+  <h1 class="h1" style="max-width:16ch">Twenty-eight teas and tisanes</h1>
+  <p class="lede" style="margin-top:1.25rem">
+    Every one has the temperature, the weight, the time and the re-steep count we
+    use ourselves. Filter below, or ask the assistant to choose for you.
+  </p>
+</div>
+
+<div class="shell" style="padding-bottom:var(--section)">
+  <div class="catalogue__layout">
+
+    {# ------------------------------------------------------ Filters ---- #}
+    <form class="filters" data-filters method="get" action="/teas/">
+      <button type="button" class="filters__toggle" data-filters-toggle aria-expanded="false">
+        <span>Filter and search</span>
+        <span class="accordion__sign" aria-hidden="true"></span>
+      </button>
+
+      <div class="filters__body">
+        <div class="filters__group">
+          <label for="filter-q" class="eyebrow">Search</label>
+          <input type="search" id="filter-q" name="q" value="{{ selected.q }}"
+                 placeholder="Name, origin or note">
+        </div>
+
+        <fieldset class="filters__group">
+          <legend class="eyebrow">Category</legend>
+          <div class="filters__options">
+            <button type="button" class="pill" data-filter="category" data-value=""
+                    aria-pressed="{% if not selected.category %}true{% else %}false{% endif %}">All</button>
+            {% for key, label in categories %}
+              <button type="button" class="pill" data-filter="category" data-value="{{ key }}"
+                      aria-pressed="{% if selected.category == key %}true{% else %}false{% endif %}">{{ label }}</button>
+            {% endfor %}
+          </div>
+        </fieldset>
+
+        <fieldset class="filters__group">
+          <legend class="eyebrow">Caffeine</legend>
+          <div class="filters__options">
+            <button type="button" class="pill" data-filter="caffeine" data-value=""
+                    aria-pressed="{% if not selected.caffeine %}true{% else %}false{% endif %}">Any</button>
+            {% for key, label in caffeine_levels %}
+              <button type="button" class="pill" data-filter="caffeine" data-value="{{ key }}"
+                      aria-pressed="{% if selected.caffeine == key %}true{% else %}false{% endif %}">{{ label }}</button>
+            {% endfor %}
+          </div>
+        </fieldset>
+
+        <fieldset class="filters__group">
+          <legend class="eyebrow">Mood</legend>
+          <div class="filters__options">
+            <button type="button" class="pill" data-filter="mood" data-value=""
+                    aria-pressed="{% if not selected.mood %}true{% else %}false{% endif %}">Any</button>
+            {% for mood in moods %}
+              <button type="button" class="pill" data-filter="mood" data-value="{{ mood }}"
+                      aria-pressed="{% if selected.mood == mood %}true{% else %}false{% endif %}">{{ mood|capfirst }}</button>
+            {% endfor %}
+          </div>
+        </fieldset>
+
+        <div class="filters__group">
+          <button type="submit" class="button button--small">Apply</button>
+          <a class="linklike small" href="/teas/" style="margin-left:1rem">Clear all</a>
+        </div>
+
+        <div class="filters__group">
+          <p class="small muted" data-shortlist-summary hidden></p>
+        </div>
+      </div>
+    </form>
+
+    {# ------------------------------------------------------ Results ---- #}
+    <div>
+      <p class="faq-count" data-tea-count aria-live="polite">
+        {{ teas|length }} tea{{ teas|length|pluralize }}
+      </p>
+
+      {# Skeleton, shown only while a filter request is in flight. #}
+      <div class="skeleton-grid" data-tea-skeleton hidden aria-hidden="true">
+        {% for i in "123456" %}
+          <div class="skeleton">
+            <div class="skeleton__art"></div>
+            <div class="skeleton__line"></div>
+            <div class="skeleton__line skeleton__line--short"></div>
+          </div>
+        {% endfor %}
+      </div>
+
+      {# Error state, shown if the filter request fails. #}
+      <div class="state" data-tea-error hidden>
+        <h3 class="h3">The catalogue did not load</h3>
+        <p>
+          That is usually a connection that dropped. The teas already on screen are
+          still accurate.
+        </p>
+        <button type="button" class="button button--quiet button--small" data-tea-retry>Try again</button>
+      </div>
+
+      <div class="tea-grid" data-tea-grid>
+        {% for tea in teas %}
+          {% include "core/_tea_card.html" with tea=tea %}
+        {% endfor %}
+      </div>
+
+      {# Empty state. #}
+      <div class="state" data-tea-empty {% if teas %}hidden{% endif %}>
+        <h3 class="h3">Nothing matches that</h3>
+        <p>
+          Try removing one filter. Or describe what you want in words and the
+          assistant will look through the shelf for you.
+        </p>
+        <button type="button" class="button button--quiet button--small" data-open-assistant
+                data-prompt="Help me choose a tea">Ask the assistant</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'core/teas.js' %}" type="module"></script>
+{% endblock %}

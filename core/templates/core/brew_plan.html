@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="shell" style="padding-top:clamp(2.5rem,5vw,4rem);padding-bottom:var(--section)">
+  <p class="eyebrow">A saved recommendation</p>
+  <h1 class="h1" style="max-width:18ch">{{ plan.prompt }}</h1>
+  <p class="lede" style="margin-top:1.25rem">
+    Saved on {{ plan.created_at|date:"j F Y" }}. This link can be shared, and it
+    needs no account.
+  </p>
+
+  <div class="tea-grid" style="margin-top:3rem">
+    {% for tea in teas %}{% include "core/_tea_card.html" with tea=tea %}{% endfor %}
+  </div>
+
+  <div class="error-banner" style="margin-top:3rem">
+    <p>Want a different direction? The assistant will take another pass.</p>
+    <button type="button" class="button button--quiet button--small" data-open-assistant
+            data-prompt="{{ plan.prompt }}">Ask the assistant</button>
+  </div>
+</div>
+{% endblock %}
